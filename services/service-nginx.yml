@@ -1,0 +1,24 @@
+version: '3.7'
+# Required an external .env file at same directory
+# Required an external defout.conf file in ./nginx/ directory
+services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/ # default config to nginx container
+    env_file:
+      - .env
+    environment:
+      - VIRTUAL_HOST=$VIRTUAL_HOST # like www.rayh.dev
+      - VIRTUAL_PORT=$VIRTUAL_PORT # like 8080
+      - LETSENCRYPT_HOST=$LETSENCRYPT_HOST #like www.rayh.dev; this is for letsencrypt container do a https certificate
+    ports:
+      - '$VIRTUAL_PORT:$VIRTUAL_PORT'
+    networks:
+      - nginx
+      - default
+
+networks:
+  nginx:
+    external: true

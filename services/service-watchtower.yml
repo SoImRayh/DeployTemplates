@@ -1,0 +1,11 @@
+# Documentation: https://containrrr.dev/watchtower/
+watchtower:
+  container_name: watchtower
+  image: containrrr/watchtower
+  command: cont1 cont1 cont3 + commands #container's name to track and additional params
+  environment:
+    - WATCHTOWER_CLEANUP=true # remove old image after update
+    - WATCHTOWER_POLL_INTERVAL=300
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+     

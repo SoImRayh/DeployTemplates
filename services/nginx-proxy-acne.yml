@@ -1,0 +1,44 @@
+version: '3.7'
+# Requer uma network externa nginx
+services:
+    nginx-proxy:
+        image: nginxproxy/nginx-proxy
+        container_name: nginx-proxy
+        restart: unless-stopped
+        ports:
+            - "443:443/tcp"
+            - "80:80/tcp"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+            - html:/usr/share/nginx/html
+            - vhost:/etc/nginx/vhost.d
+            - certs:/etc/nginx/certs
+        networks:
+            - nginx
+
+    nginx-proxy-acme:
+        image: nginxproxy/acme-companion
+        restart: unless-stopped
+        container_name: nginx-proxy-letsencrypt
+        env_file:
+            -   .env
+        environment:
+            - DEFAULT_EMAIL=$DEFAULT_EMAIL
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - acme:/etc/acme.sh
+        volumes_from:
+            - nginx-proxy
+        networks:
+            - nginx
+
+volumes:
+    vhost:
+    certs:
+    acme:
+    html:
+
+
+networks:
+    nginx:
+        external: true
